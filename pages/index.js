@@ -3,23 +3,42 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const API_KEY = "67c083c536b689fc74b429a01c0f65a0";
 
-export default function Home({results}) {
-    const router = useRouter();
-    const onClick = (id) => {
-        router.push(`/movies/${id}`);
-    };
+export default function Home({ results }) {
+  const router = useRouter();
+  const onClick = (id, title) => {
+    router.push(
+      {
+        pathname: `/movies/${id}`,
+        query: {
+          title,
+        },
+      },
+      `/movies/${id}`
+    );
+  };
   return (
     <div className="container">
       <Seo title="Home" />
       {results?.map((movie) => (
-        // <Link href={`/movies/${movie.id}`} key={movie.id}>
-        <div onClick={() => onClick(movie.id)} className="movie">
-          <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} />
-          <h4>{movie.original_title}</h4>
-        </div>
-        // </Link>
+        <Link
+          href={{
+            pathname: `/movies/${movie.id}`,
+            query: {
+              title: movie.original_title,
+            },
+          }}
+          as={`/movies/${movie.id}`}
+          key={movie.id}
+        >
+          <div
+            onClick={() => onClick(movie.id, movie.original_title)}
+            className="movie"
+          >
+            <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} />
+            <h4>{movie.original_title}</h4>
+          </div>
+        </Link>
       ))}
       <style jsx>{`
         .container {
@@ -47,10 +66,12 @@ export default function Home({results}) {
 }
 
 export async function getServerSideProps() {
-  const { results } = await (await fetch(`http://localhost:3000/api/movies`)).json();
+  const { results } = await (
+    await fetch(`http://localhost:3000/api/movies`)
+  ).json();
   return {
     props: {
-        results,
+      results,
     },
   };
 }
