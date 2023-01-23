@@ -1,18 +1,25 @@
 import Seo from "@/components/Seo";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const API_KEY = "67c083c536b689fc74b429a01c0f65a0";
 
 export default function Home({results}) {
+    const router = useRouter();
+    const onClick = (id) => {
+        router.push(`/movies/${id}`);
+    };
   return (
     <div className="container">
       <Seo title="Home" />
       {results?.map((movie) => (
-        <div className="movie" key={movie.id}>
+        // <Link href={`/movies/${movie.id}`} key={movie.id}>
+        <div onClick={() => onClick(movie.id)} className="movie">
           <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} />
           <h4>{movie.original_title}</h4>
         </div>
+        // </Link>
       ))}
       <style jsx>{`
         .container {
